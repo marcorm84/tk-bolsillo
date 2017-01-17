@@ -12,8 +12,8 @@ class AccountController extends Controller
 {
     public function index()
     {
-        $accounts = Auth::user()->accounts();
+        $accounts = Auth::user()->accounts;
 
-        return $accounts;
+        return view('app.accounts.my_accounts', ['accounts' => $accounts]);
     }
 }
