@@ -16,7 +16,7 @@ class Account extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getBalanceAttribute()
+    public function getBalanceFormattedAttribute()
     {
         switch ($this->currency_id) {
             case self::SOLES:

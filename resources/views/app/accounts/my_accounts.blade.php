@@ -7,7 +7,7 @@
 @foreach($accounts as $account)
 <div>
   <p>Name: {{ $account->name }}</p>
-  <p>Balance: {{ $account->balance }}</p>
+  <p>Balance: {{ $account->balance_formatted }}</p>
 </div>
 @endforeach
 </body>
