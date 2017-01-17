@@ -4,8 +4,12 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
+use App\User;
+
 class CreateAccountTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /** @test */
     public function user_can_register_an_account()
     {
