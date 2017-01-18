@@ -26,4 +26,15 @@ class AccountController extends Controller
 
         return view('app.accounts.add_account', compact('currencies', 'account_types'));
     }
+
+    public function store()
+    {
+        $data = request()->all();
+        $data['user_id'] = Auth::user()->id;
+        $data['icon']    = 'default1.jpg';
+
+        Account::create($data);
+
+        return redirect()->route('my_accounts')->with('message', 'Account added successfully.');
+    }
 }
