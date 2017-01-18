@@ -5,6 +5,8 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use App\User;
+use App\Currency;
+use App\AccountType;
 
 class CreateAccountTest extends TestCase
 {
@@ -21,9 +23,9 @@ class CreateAccountTest extends TestCase
 
         $this->actingAs($user);
 
-        $this->visit('/accounts/add')
+        $this->visit('/my-accounts/add')
              ->see('Soles')
-             ->see('Dolares')
+             ->see('Dollars')
              ->see('Coins')
              ->see('Credit Card');
 
