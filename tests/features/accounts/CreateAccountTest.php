@@ -14,15 +14,24 @@ class CreateAccountTest extends TestCase
     public function user_can_register_an_account()
     {
         $user = factory(User::class)->create();
+        $currency_soles   = Currency::create(['name' => 'Soles']);
+        $currency_dollars = Currency::create(['name' => 'Dollars']);
+        $account_type_coins       = AccountType::create(['name' => 'Coins']);
+        $account_type_credit_card = AccountType::create(['name' => 'Credit Card']);
 
         $this->actingAs($user);
 
         $this->visit('/accounts/add')
-             ->type('Bolsillo', 'name')
-             ->select('Soles', 'currency')
+             ->see('Soles')
+             ->see('Dolares')
+             ->see('Coins')
+             ->see('Credit Card');
+
+        $this->type('Pocket', 'name')
+             ->select($currency_soles->id, 'currency_id')
              ->type('', 'description')
              ->type('0.00', 'balance')
-             ->type('coins', 'type')
+             ->select($account_type_coins->id, 'type_id')
              ->press('Add');
 
         $this->seePageIs('/my-accounts')
