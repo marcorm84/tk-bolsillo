@@ -18,3 +18,5 @@ Route::get('/', function () {
 Route::get('/my-accounts', ['as' => 'my_accounts', 'uses' => 'AccountController@index']);
 Route::get('/my-accounts/add', ['as' => 'my_accounts.add', 'uses' => 'AccountController@create']);
 Route::post('/my-accounts/add', ['as' => 'my_accounts.store', 'uses' => 'AccountController@store']);
+
+$router->post('/transactions', ['as' => 'transactions.add', 'uses' => 'TransactionController@add']);
