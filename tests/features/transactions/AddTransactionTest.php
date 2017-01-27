@@ -13,7 +13,7 @@ class AddTransactionTest extends TestCase
     **/
     public function user_can_add_expenses()
     {
-        $user = factory(User::class)->create();
+        $user = factory(App\User::class)->create();
 
         $this->getAccounts();
 
@@ -40,6 +40,6 @@ class AddTransactionTest extends TestCase
 
         $this->assertResponseStatus(200);
 
-        $this->seeInDatabase('transactions', ['title' => 'pack empanadas + coca cola');
+        $this->seeInDatabase('transactions', ['title' => 'pack empanadas + coca cola']);
     }
 }
