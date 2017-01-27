@@ -5,6 +5,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use App\TransactionType;
+use App\Category;
 
 class AddTransactionTest extends TestCase
 {
