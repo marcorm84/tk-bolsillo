@@ -19,7 +19,6 @@ class CreateAccountsTable extends Migration
             $table->string('description')->nullable();
             $table->double('balance');
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('type_id');
             $table->unsignedInteger('currency_id');
             $table->string('icon');
             $table->timestamps();

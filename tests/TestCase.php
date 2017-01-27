@@ -22,4 +22,9 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $app;
     }
+
+    public function getAccounts()
+    {
+        return factory(App\Account::class, 3)->create();
+    }
 }
