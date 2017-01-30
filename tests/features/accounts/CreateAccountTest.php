@@ -115,7 +115,7 @@ class CreateAccountTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $this->post('/my-accounts/add', [
+        $this->json('POST', '/my-accounts/add', [
             'name' => 'Pocket',
             'currency' => 1,
             'balance' => 100.0,
