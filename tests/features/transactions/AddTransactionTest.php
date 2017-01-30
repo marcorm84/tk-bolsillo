@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\TransactionType;
 use App\Category;
 use App\Account;
+use App\Transaction;
 
 class AddTransactionTest extends TestCase
 {
@@ -142,6 +143,7 @@ class AddTransactionTest extends TestCase
     /** @test */
     function user_can_add_expenses_with_labels()
     {
+        $this->disableExceptionHandling();
         $this->json('post', 'transactions', [
             'account_id' => 1,
             'title' => 'pack empanadas + coca cola',
@@ -161,7 +163,7 @@ class AddTransactionTest extends TestCase
         $transaction = Transaction::find(1);
 
         $this->assertTrue($transaction->labels()->count() == 3);
-        $this->assertTrue($transaction->labels()-first()->name == 'empanadas');
+        $this->assertTrue($transaction->labels()->first()->name == 'empanadas');
     }
 
     /** @test */

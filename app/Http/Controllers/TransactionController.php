@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Transaction;
 use App\Account;
-
+use App\Label;
 use Auth;
 
 class TransactionController extends Controller
@@ -21,6 +21,7 @@ class TransactionController extends Controller
 
         $account = Account::find(request('account_id'));
 
+        $label_ids = [];
         if ($account->balance >= request('amount')) {
             $transaction = new Transaction;
             $transaction->title       = request('title');
@@ -31,7 +32,13 @@ class TransactionController extends Controller
             $transaction->amount      = request('amount');
             $transaction->user_id     = Auth::user()->id;
 
+            $label_ids = array_map(function ($label) {
+                return Label::firstOrCreate(['name' => $label])->id;
+            }, request('labels'));
+
             $transaction->save();
+
+            $transaction->labels()->attach($label_ids);
 
             $account->balance -= request('amount');
             $account->save();
