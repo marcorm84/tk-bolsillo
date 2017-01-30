@@ -6,16 +6,15 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use App\TransactionType;
 use App\Category;
+use App\Account;
 
 class AddTransactionTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /**
-    @test
-    **/
-    public function user_can_add_expenses()
+    function setUp()
     {
+        parent::setUp();
         $user = factory(App\User::class)->create();
 
         $this->getAccounts();
@@ -30,7 +29,119 @@ class AddTransactionTest extends TestCase
 
         Category::create(['name' => 'Food', 'transaction_type_id' => 2]);
         Category::create(['name' => 'Games', 'transaction_type_id' => 2]);
+    }
 
+    /** @test */
+    function user_can_add_expenses()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata'
+        ]);
+
+        $account = Account::find(1);
+
+        $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('transactions', ['title' => 'pack empanadas + coca cola']);
+        $this->seeInDatabase('transactions', ['created_at' => date('Y-m-d')]);
+
+        $this->assertTrue($account->balance == 87.50);
+    }
+
+    /** @test */
+    function user_cannot_add_expenses_without_title()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata'
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'title' => ['The title field is required.']
+        ]);
+    }
+
+    /** @test */
+    function user_cannot_add_expenses_with_large_title()
+    {
+        $this->json('post', 'transactions', [
+            'title' => 'Laravel also provides a variety of helpful tools to make it easier to test your database driven applications. First, you may use the seeInDatabase helper to assert that data exists in the database matching a given set of criteria. For example, if we would like to verify that there is a record in the users table with the email value of sally@example.com, we can do the following:',
+            'account_id' => 1,
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata'
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'title' => ['The title may not be greater than 50 characters.']
+        ]);
+    }
+
+    /** @test */
+    function user_can_add_expenses_without_description()
+    {
+        $this->json('post', 'transactions', [
+            'title' => 'pack empanadas + coca cola',
+            'account_id' => 1,
+            'amount' => 12.50,
+            'type' => 2,
+            'category' => 3,
+        ]);
+
+        $this->assertResponseStatus(200);
+    }
+
+    /** @test */
+    function user_cannot_add_expenses_with_amount_lesser_than_zero()
+    {
+        $this->json('post', 'transactions', [
+            'title' => 'pack empanadas + coca cola',
+            'account_id' => 1,
+            'amount' => -10.0,
+            'type' => 2,
+            'category' => 3,
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'amount' => ['The amount must be greater than 0.']
+        ]);
+    }
+
+    /** @test */
+    function user_cannot_add_expenses_without_amount()
+    {
+        $this->json('post', 'transactions', [
+            'title' => 'pack empanadas + coca cola',
+            'account_id' => 1,
+            'type' => 2,
+            'category' => 3,
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'title' => ['The amount field is required.']
+        ]);
+    }
+
+    /** @test */
+    function user_can_add_expenses_with_labels()
+    {
         $this->json('post', 'transactions', [
             'account_id' => 1,
             'title' => 'pack empanadas + coca cola',
@@ -43,6 +154,31 @@ class AddTransactionTest extends TestCase
 
         $this->assertResponseStatus(200);
 
-        $this->seeInDatabase('transactions', ['title' => 'pack empanadas + coca cola']);
+        $this->seeInDatabase('labels', ['name' => 'empanadas']);
+        $this->seeInDatabase('labels', ['name' => 'metro']);
+        $this->seeInDatabase('labels', ['name' => 'tk']);
+
+        $transaction = Transaction::find(1);
+
+        $this->assertTrue($transaction->labels()->count() == 3);
+        $this->assertTrue($transaction->labels()-first()->name == 'empanadas');
+    }
+
+    /** @test */
+    function user_can_add_expense_with_image()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            ''
+        ]);
+
+        $this->assertResponseStatus(200);
+
+        // To - do
     }
 }

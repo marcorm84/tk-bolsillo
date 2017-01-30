@@ -25,6 +25,8 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
 
     public function getAccounts()
     {
-        return factory(App\Account::class, 3)->create();
+        factory(App\Account::class)->create(['balance' => 100.0]);
+        factory(App\Account::class)->create(['balance' => 2.0]);
+        factory(App\Account::class)->create(['balance' => 66.60]);
     }
 }
