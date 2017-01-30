@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+use Carbon\Carbon;
+
 class CreateTransactionsTable extends Migration
 {
     /**
@@ -22,7 +24,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedInteger('category_id');
             $table->double('amount');
             $table->string('description')->nullable();
-            $table->timestamps();
+            $table->date('created_at')->default(Carbon::now());
         });
     }
 
