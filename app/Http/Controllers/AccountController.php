@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Account;
 use App\Currency;
+use App\Collaborator;
 
 use Auth;
 
@@ -20,19 +21,32 @@ class AccountController extends Controller
 
     public function create()
     {
-        $currencies    = Currency::all();
+        $currencies = Currency::all();
 
-        return view('app.accounts.add_account', compact('currencies', 'account_types'));
+        return view('app.accounts.add_account', compact('currencies'));
     }
 
     public function store()
     {
-        $data = request()->all();
-        $data['user_id'] = Auth::user()->id;
-        $data['icon']    = 'default1.jpg';
+        $this->validate(request(), [
+            'name'        => 'required',
+            'currency'    => 'required',
+        ]);
 
-        Account::create($data);
+        $account = new Account;
+        $account->name        = request('name');
+        $account->balance     = request('balance');
+        $account->description = request('description');
+        $account->currency_id = request('currency');
+        $account->icon        = 'default1.jpg';
+        $account->user_id     = Auth::user()->id;
 
-        return redirect()->route('my_accounts')->with('message', 'Account added successfully.');
+        $account->save();
+
+        collect(request('collaborators'))->each(function($collaborator) use($account) {
+            Collaborator::create(['email' => $collaborator, 'account_id' => $account->id]);
+        });
+
+        return response()->json(['message' => 'Account added successfully.']);
     }
 }

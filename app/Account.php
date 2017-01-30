@@ -25,4 +25,9 @@ class Account extends Model
                 return '$ ' . number_format($this->attributes['balance'], 2);
         }
     }
+
+    public function collaborators()
+    {
+        return $this->hasMany(Collaborator::class);
+    }
 }
