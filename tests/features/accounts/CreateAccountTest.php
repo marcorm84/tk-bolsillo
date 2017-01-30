@@ -18,22 +18,17 @@ class CreateAccountTest extends TestCase
         $user = factory(User::class)->create();
         $currency_soles   = Currency::create(['name' => 'Soles']);
         $currency_dollars = Currency::create(['name' => 'Dollars']);
-        $account_type_coins       = AccountType::create(['name' => 'Coins']);
-        $account_type_credit_card = AccountType::create(['name' => 'Credit Card']);
 
         $this->actingAs($user);
 
         $this->visit('/my-accounts/add')
              ->see('Soles')
-             ->see('Dollars')
-             ->see('Coins')
-             ->see('Credit Card');
+             ->see('Dollars');
 
         $this->type('Pocket', 'name')
              ->select($currency_soles->id, 'currency_id')
              ->type('', 'description')
              ->type('0.00', 'balance')
-             ->select($account_type_coins->id, 'type_id')
              ->press('Add');
 
         $this->seePageIs('/my-accounts')

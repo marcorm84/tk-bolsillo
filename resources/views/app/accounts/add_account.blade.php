@@ -13,11 +13,6 @@
   @endforeach
   </select>
   <input type="text" name="description">
-  <select name="type_id">
-  @foreach ($account_types as $account_type)
-    <option value="{{ $account_type->id }}">{{ $account_type->name }}</option>
-  @endforeach
-  </select>
   <input type="number" name="balance">
   <button type="submit">Add</button>
 </form>
