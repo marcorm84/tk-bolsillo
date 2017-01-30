@@ -123,6 +123,7 @@ class AddTransactionTest extends TestCase
         ]);
     }
 
+    //Marco
     /** @test */
     function user_cannot_add_expenses_without_amount()
     {
@@ -136,10 +137,11 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(422);
 
         $this->seeJson([
-            'title' => ['The amount field is required.']
+            'amount' => ['The amount field is required.']
         ]);
     }
 
+    //Marco
     /** @test */
     function user_can_add_expenses_with_labels()
     {

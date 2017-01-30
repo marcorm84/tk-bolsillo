@@ -15,6 +15,7 @@ class TransactionController extends Controller
     {
         $rules = [
             'title' => 'required|max:50',
+            'amount' => 'required'
         ];
 
         $this->validate(request(), $rules);
@@ -32,13 +33,14 @@ class TransactionController extends Controller
             $transaction->amount      = request('amount');
             $transaction->user_id     = Auth::user()->id;
 
-            $label_ids = array_map(function ($label) {
-                return Label::firstOrCreate(['name' => $label])->id;
-            }, request('labels'));
-
             $transaction->save();
 
-            $transaction->labels()->attach($label_ids);
+            if(request('labels')) {
+                $label_ids = array_map(function ($label) {
+                    return Label::firstOrCreate(['name' => $label])->id;
+                }, request('labels'));
+                $transaction->labels()->attach($label_ids);
+            }
 
             $account->balance -= request('amount');
             $account->save();
