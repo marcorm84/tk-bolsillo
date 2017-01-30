@@ -22,7 +22,6 @@ class ViewListingAccountsTest extends TestCase
             'name'        => 'bolsillo',
             'balance'     => 0.50,
             'user_id'     => 1,
-            'type_id'     => 1,
             'currency_id' => 1,
             'icon'        => 'default1.jpg'
         ]);
@@ -31,7 +30,6 @@ class ViewListingAccountsTest extends TestCase
             'name'        => 'banco',
             'balance'     => 850.00,
             'user_id'     => 1,
-            'type_id'     => 2,
             'currency_id' => 2,
             'icon'        => 'default2.jpg'
         ]);
