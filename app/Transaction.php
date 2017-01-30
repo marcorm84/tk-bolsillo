@@ -9,4 +9,9 @@ class Transaction extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function labels()
+    {
+        return $this->belongsToMany('App\Label', 'transaction_labels');
+    }
 }
