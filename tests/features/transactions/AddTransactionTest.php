@@ -123,7 +123,11 @@ class AddTransactionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    /**
+     * Marco
+     *
+     * @test
+     */
     function user_cannot_add_expenses_without_amount()
     {
         $this->json('post', 'transactions', [
@@ -136,11 +140,15 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(422);
 
         $this->seeJson([
-            'title' => ['The amount field is required.']
+            'amount' => ['The amount field is required.']
         ]);
     }
 
-    /** @test */
+    /**
+     * Marco
+     *
+     * @test
+     */
     function user_can_add_expenses_with_labels()
     {
         $this->disableExceptionHandling();
