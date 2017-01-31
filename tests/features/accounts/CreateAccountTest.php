@@ -28,14 +28,22 @@ class CreateAccountTest extends TestCase
              ->see('Soles')
              ->see('Dollars');
 
-        $this->type('Pocket', 'name')
-             ->select(1, 'currency_id')
-             ->type('', 'description')
-             ->type('0.00', 'balance')
-             ->press('Add');
+        $this->json('POST', '/my-accounts/add', [
+            'name' => 'Pocket',
+            'currency' => 1,
+            'description' => '',
+            'balance' => 0.0,
+            'collaborators' => [
+                'test@example.com',
+                'prueba@prueba.com',
+                'admin@admin.com',
+                'larry@tekton.com'
+            ],
+        ]);
 
-        $this->seePageIs('/my-accounts')
-             ->see('Account added successfully.');
+        $this->assertResponseStatus(200);
+
+        $this->seeJson(['message' => 'Account added successfully.']);
     }
 
     /** @test */
@@ -43,9 +51,9 @@ class CreateAccountTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $this->post('/my-accounts/add', [
+        $this->json('POST', '/my-accounts/add', [
             'name' => 'Pocket',
-            'currency_id' => 1,
+            'currency' => 1,
             'description' => 'bolsillo',
             'balance' => 100.0,
             'collaborators' => [
@@ -56,15 +64,14 @@ class CreateAccountTest extends TestCase
             ],
         ]);
 
-        $this->followRedirects();
+        $this->assertResponseStatus(200);
 
-        $this->seePageIs('/my-accounts')
-             ->see('Account added successfully.');
+        $this->seeJson(['message' => 'Account added successfully.']);
 
-        $this->seeInDatabase('account_collaborators', ['email' => 'test@example.com']);
-        $this->seeInDatabase('account_collaborators', ['email' => 'prueba@prueba.com']);
-        $this->seeInDatabase('account_collaborators', ['email' => 'admin@admin.com']);
-        $this->seeInDatabase('account_collaborators', ['email' => 'larry@tekton.com']);
+        $this->seeInDatabase('collaborators', ['email' => 'test@example.com']);
+        $this->seeInDatabase('collaborators', ['email' => 'prueba@prueba.com']);
+        $this->seeInDatabase('collaborators', ['email' => 'admin@admin.com']);
+        $this->seeInDatabase('collaborators', ['email' => 'larry@tekton.com']);
     }
 
     /** @test */
@@ -72,16 +79,17 @@ class CreateAccountTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $this->post('/my-accounts/add', [
-            'currency_id' => 1,
+        $this->json('POST', '/my-accounts/add', [
+            'currency' => 1,
             'description' => 'bolsillo',
             'balance' => 100.0,
         ]);
 
-        $this->followRedirects();
+        $this->assertResponseStatus(422);
 
-        $this->seePageIs('/my-accounts/add')
-             ->see('The name field is required.');
+        $this->seeJson([
+            'name' => ['The name field is required.']
+        ]);
     }
 
     /** @test */
@@ -89,16 +97,17 @@ class CreateAccountTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $this->post('/my-accounts/add', [
+        $this->json('POST', '/my-accounts/add', [
             'name' => 'Pocket',
             'description' => 'bolsillo',
             'balance' => 100.0,
         ]);
 
-        $this->followRedirects();
+        $this->assertResponseStatus(422);
 
-        $this->seePageIs('/my-accounts/add')
-             ->see('The currency field is required.');
+        $this->seeJson([
+            'currency' => ['The currency field is required.']
+        ]);
     }
 
     /** @test */
@@ -106,15 +115,14 @@ class CreateAccountTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $this->post('/my-accounts/add', [
+        $this->json('POST', '/my-accounts/add', [
             'name' => 'Pocket',
-            'currency_id' => 1,
+            'currency' => 1,
             'balance' => 100.0,
         ]);
 
-        $this->followRedirects();
+        $this->assertResponseStatus(200);
 
-        $this->seePageIs('/my-accounts')
-             ->see('Account added successfully.');
+        $this->seeJson(['message' => 'Account added successfully.']);
     }
 }
