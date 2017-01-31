@@ -35,7 +35,7 @@ class TransactionController extends Controller
 
             $transaction->save();
 
-            if(request('labels')) {
+            if (request('labels')) {
                 $label_ids = array_map(function ($label) {
                     return Label::firstOrCreate(['name' => $label])->id;
                 }, request('labels'));

@@ -123,8 +123,11 @@ class AddTransactionTest extends TestCase
         ]);
     }
 
-    //Marco
-    /** @test */
+    /**
+     * Marco
+     *
+     * @test
+     */
     function user_cannot_add_expenses_without_amount()
     {
         $this->json('post', 'transactions', [
@@ -141,8 +144,11 @@ class AddTransactionTest extends TestCase
         ]);
     }
 
-    //Marco
-    /** @test */
+    /**
+     * Marco
+     *
+     * @test
+     */
     function user_can_add_expenses_with_labels()
     {
         $this->disableExceptionHandling();
