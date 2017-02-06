@@ -48,10 +48,6 @@ class ViewAccountDetailTest extends TestCase
             'amount' => 12
         ]);
         factory(Transaction::class)->create([
-            'type_id' => 2,
-            'amount' => 15
-        ]);
-        factory(Transaction::class)->create([
             'type_id' => 1,
             'amount' => 20
         ]);
@@ -72,8 +68,6 @@ class ViewAccountDetailTest extends TestCase
              ->see('col3@test.com')
              ->see('Expenses')
              ->see('12')
-             ->see('Expenses')
-             ->see('15')
              ->see('Income')
              ->see('20');
     }
