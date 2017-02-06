@@ -14,4 +14,9 @@ class Transaction extends Model
     {
         return $this->belongsToMany('App\Label', 'transaction_labels');
     }
+
+    public function type()
+    {
+    	return $this->belongsTo('App\TransactionType');
+    }
 }

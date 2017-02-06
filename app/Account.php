@@ -30,4 +30,14 @@ class Account extends Model
     {
         return $this->hasMany(Collaborator::class);
     }
+
+    public function currency()
+    {
+        return $this->belongsTo('App\Currency');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Transaction');
+    }
 }

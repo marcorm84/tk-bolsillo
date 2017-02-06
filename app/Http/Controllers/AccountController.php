@@ -49,4 +49,11 @@ class AccountController extends Controller
 
         return response()->json(['message' => 'Account added successfully.']);
     }
+
+    public function show($id)
+    {
+        $account = Account::findOrFail($id);
+
+        return view('app.accounts.my_account_detail')->with('account', $account);
+    }
 }
