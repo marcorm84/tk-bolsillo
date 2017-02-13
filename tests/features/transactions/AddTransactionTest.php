@@ -8,6 +8,7 @@ use App\TransactionType;
 use App\Category;
 use App\Account;
 use App\Transaction;
+use Carbon\Carbon;
 
 class AddTransactionTest extends TestCase
 {
@@ -190,5 +191,125 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(200);
 
         // To - do
+    }
+
+    /** @test */
+    function user_cannot_add_transaction_with_category_of_other_transaction_type()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 1,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'category' => ['The category selected does not belongs to transaction type.']
+        ]);
+    }
+
+    /** @test */
+    function user_can_add_transaction_with_custom_date_before_or_today()
+    {
+        $today = Carbon::today()->format('Y-m-d');
+        $last_week = Carbon::today()->subWeek()->format('Y-m-d');
+
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            'date' => $last_week,
+        ]);
+
+        $this->assertResponseStatus(200);
+
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            'date' => $today,
+        ]);
+
+        $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('transactions', ['date' => $today]);
+
+        $this->seeInDatabase('transactions', ['date' => $last_week]);
+    }
+
+    /** @test */
+    function user_cannot_add_transaction_with_custom_date_after_today()
+    {
+        $tomorrow = Carbon::tomorrow()->format('Y-m-d');
+
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            'date' => $tomorrow,
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'date' => ['The date should be today or before'],
+        ]);
+    }
+
+    /** @test */
+    function user_can_add_transaction_with_custom_hour_before_now()
+    {
+        $time = Carbon::now()->subMinutes(10);
+
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            'hour' => $time->format('H:i'),
+        ]);
+
+        $this->assertResponseStatus(200);
+
+        $transaction = Transaction::find(1);
+
+        $this->assertTrue($time == $transaction->time);
+    }
+
+    /** @test */
+    function user_cannot_add_transaction_with_custom_hour_after_now()
+    {
+        $time = Carbon::now()->subMinutes(10);
+
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'pack empanadas + coca cola',
+            'amount' => '12.50',
+            'type' => 2,
+            'category' => 3,
+            'description' => 'empanadas en metro de tarata',
+            'hour' => $time->format('H:i'),
+        ]);
+
+        $this->assertResponseStatus(422);
+
+        $this->seeJson([
+            'hour' => ['The hour should before the current time'],
+        ]);
     }
 }
