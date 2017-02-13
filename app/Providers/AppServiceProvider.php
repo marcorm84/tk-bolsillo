@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Validator;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,7 +15,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        /**
+         * gt Greater than, used only for numbers
+         * parameters[0]
+         */
+        Validator::extend('gt', function($attribute, $value, $parameters, $validator) {
+            return $value > $parameters[0];
+        });
+
+        Validator::replacer('gt', function($message, $attribute, $rule, $parameters) {
+          return str_replace(':field', $parameters[0], $message);
+        });
     }
 
     /**
