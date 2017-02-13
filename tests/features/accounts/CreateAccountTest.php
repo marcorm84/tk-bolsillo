@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use App\User;
 use App\Currency;
-use App\AccountType;
 
 class CreateAccountTest extends TestCase
 {
@@ -15,8 +14,7 @@ class CreateAccountTest extends TestCase
     function setUp()
     {
         parent::setUp();
-        Currency::create(['name' => 'Soles']);
-        Currency::create(['name' => 'Dollars']);
+        $this->seed('CurrencySeeder');
     }
 
     /** @test */
