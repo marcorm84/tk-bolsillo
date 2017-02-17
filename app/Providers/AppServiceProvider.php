@@ -26,6 +26,21 @@ class AppServiceProvider extends ServiceProvider
         Validator::replacer('gt', function($message, $attribute, $rule, $parameters) {
           return str_replace(':field', $parameters[0], $message);
         });
+
+        Validator::extend('exists_where', function($attribute, $value, $parameters){
+            $table = $parameters[0];
+            $query = \DB::table($table)->where('id', $value);
+
+            for ($i=1; $i < count($parameters); $i+=2) {
+                if (($col = $parameters[$i]) && ($val = $parameters[$i+1])) {
+                    $query = $query->where($col, $val);
+                } else {
+                    break;
+                }
+            }
+
+            return (bool) $query->count();
+        });
     }
 
     /**

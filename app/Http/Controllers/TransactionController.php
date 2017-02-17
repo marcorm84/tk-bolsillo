@@ -15,10 +15,15 @@ class TransactionController extends Controller
     {
         $rules = [
             'title' => 'required|max:50',
-            'amount' => 'required|gt:0'
+            'amount' => 'required|gt:0',
+            'category' => 'required|exists_where:categories,transaction_type_id,' . request('type')
         ];
 
-        $this->validate(request(), $rules);
+        $messages = [
+            'exists_where' => 'The category selected does not belongs to transaction type.'
+        ];
+
+        $this->validate(request(), $rules, $messages);
 
         $account = Account::find(request('account_id'));
 
