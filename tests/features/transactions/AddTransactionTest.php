@@ -265,7 +265,7 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(422);
 
         $this->seeJson([
-            'date' => ['The date should be today or before'],
+            'date' => ['The date must be a date before ' . $tomorrow . '.'],
         ]);
     }
 

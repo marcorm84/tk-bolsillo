@@ -24,6 +24,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedInteger('category_id');
             $table->double('amount');
             $table->string('description')->nullable();
+            $table->date('date')->default(Carbon::now()->format('Y-m-d'));
             $table->date('created_at')->default(Carbon::now()->format('Y-m-d'));
         });
     }
