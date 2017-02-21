@@ -15,7 +15,8 @@ class TransactionController extends Controller
     {
         $rules = [
             'title' => 'required|max:50',
-            'amount' => 'required|gt:0'
+            'amount' => 'required|gt:0',
+            'category' => 'required|exists:categories,id,transaction_type_id,' . request('type')
         ];
 
         $this->validate(request(), $rules);
