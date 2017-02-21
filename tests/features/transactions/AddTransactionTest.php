@@ -208,7 +208,7 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(422);
 
         $this->seeJson([
-            'category' => ['The category selected does not belongs to transaction type.']
+            'category' => ['The selected category is invalid.']
         ]);
     }
 
