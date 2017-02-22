@@ -288,13 +288,13 @@ class AddTransactionTest extends TestCase
 
         $transaction = Transaction::find(1);
 
-        $this->assertTrue($time == $transaction->time);
+        $this->assertTrue($time->format('H:i') == $transaction->time);
     }
 
     /** @test */
     function user_cannot_add_transaction_with_custom_hour_after_now()
     {
-        $time = Carbon::now()->subMinutes(10);
+        $time = Carbon::now()->addMinutes(10);
 
         $this->json('post', 'transactions', [
             'account_id' => 1,

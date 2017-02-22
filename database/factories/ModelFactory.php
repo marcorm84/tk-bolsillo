@@ -44,6 +44,8 @@ $factory->define(App\Transaction::class, function (Faker\Generator $faker) {
         'category_id' => 1,
         'amount' => 100,
         'description' => 'test test test',
+        'date' => Carbon\Carbon::now()->format('Y-m-d'),
+        'time' => Carbon\Carbon::now()->format('H:i')
     ];
 });
 
