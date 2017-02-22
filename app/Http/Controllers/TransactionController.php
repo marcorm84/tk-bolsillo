@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Transaction;
+use Carbon\Carbon;
 use App\Account;
 use App\Label;
 use Auth;
@@ -16,10 +17,16 @@ class TransactionController extends Controller
         $rules = [
             'title' => 'required|max:50',
             'amount' => 'required|gt:0',
-            'category' => 'required|exists:categories,id,transaction_type_id,' . request('type')
+            'category' => 'required|exists:categories,id,transaction_type_id,' . request('type'),
+            'date' => 'date_format:Y-m-d|before:' . Carbon::tomorrow()->format('Y-m-d'),
+            'hour' => 'before:'.Carbon::now()->format('H:i'),
         ];
 
-        $this->validate(request(), $rules);
+        $messages = [
+            'hour.before' => 'The hour should before the current time',
+        ];
+
+        $this->validate(request(), $rules, $messages);
 
         $account = Account::find(request('account_id'));
 
@@ -32,6 +39,8 @@ class TransactionController extends Controller
             $transaction->category_id = request('category');
             $transaction->description = request('description');
             $transaction->amount      = request('amount');
+            $transaction->date        = request('date', Carbon::now()->format('Y-m-d'));
+            $transaction->time        = request('hour', Carbon::now()->format('H:i'));
             $transaction->user_id     = Auth::user()->id;
 
             $transaction->save();
