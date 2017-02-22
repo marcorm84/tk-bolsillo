@@ -34,7 +34,8 @@ class TransactionController extends Controller
             $transaction->category_id = request('category');
             $transaction->description = request('description');
             $transaction->amount      = request('amount');
-            $transaction->date        = request('date', '');
+            $transaction->date        = request('date', Carbon::now()->format('Y-m-d'));
+            $transaction->time        = request('hour', Carbon::now()->format('H:i'));
             $transaction->user_id     = Auth::user()->id;
 
             $transaction->save();

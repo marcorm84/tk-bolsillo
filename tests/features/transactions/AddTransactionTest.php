@@ -39,7 +39,7 @@ class AddTransactionTest extends TestCase
         $this->json('post', 'transactions', [
             'account_id' => 1,
             'title' => 'pack empanadas + coca cola',
-            'amount' => '12.50',
+            'amount' => 12.50,
             'type' => 2,
             'category' => 3,
             'description' => 'empanadas en metro de tarata'
@@ -50,7 +50,7 @@ class AddTransactionTest extends TestCase
         $this->assertResponseStatus(200);
 
         $this->seeInDatabase('transactions', ['title' => 'pack empanadas + coca cola']);
-        $this->seeInDatabase('transactions', ['created_at' => date('Y-m-d')]);
+        $this->seeInDatabase('transactions', ['date' => date('Y-m-d')]);
 
         $this->assertTrue($account->balance == 87.50);
     }
