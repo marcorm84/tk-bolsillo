@@ -25,6 +25,8 @@ class AddTransactionTest extends TestCase
 
         TransactionType::create(['name' => 'Income']);
         TransactionType::create(['name' => 'Expenses']);
+        TransactionType::create(['name' => 'Loans']);
+        TransactionType::create(['name' => 'Debts']);
 
         Category::create(['name' => 'Salary', 'transaction_type_id' => 1]);
         Category::create(['name' => 'Savings', 'transaction_type_id' => 1]);
@@ -311,5 +313,61 @@ class AddTransactionTest extends TestCase
         $this->seeJson([
             'hour' => ['The hour should before the current time'],
         ]);
+    }
+
+    /** @test */
+    function user_can_add_incomes()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'freelo',
+            'amount' => 140.50,
+            'type' => 1,
+            'category' => 1
+        ]);
+
+        $account = Account::find(1);
+
+        $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('transactions', ['title' => 'freelo']);
+
+        $this->assertTrue($account->balance == 240.50);
+    }
+
+    /**
+     * Loan - Prestamo es cuando prestas a alguien
+     * Category is not mandatory
+     * @test
+     */
+    function user_can_add_loan()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'loan to Juancito',
+            'amount' => 100.40,
+            'type' => 3,
+            'description' => 'juancito buys many empanadas',
+        ]);
+
+        $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Debt - deuda es cuando te prestas de alguien
+     * Category is not mandatory
+     * @test
+     */
+    function user_can_add_debt()
+    {
+        $this->json('post', 'transactions', [
+            'account_id' => 1,
+            'title' => 'debt to Francisco',
+            'amount' => 777.30,
+            'type' => 4,
+            'description' => 'debt for Francisco Party'
+        ]);
+
+        $this->assertResponseStatus(200);
     }
 }
