@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Transaction;
+use App\TransactionType;
 use Carbon\Carbon;
 use App\Account;
 use App\Label;
@@ -31,7 +32,8 @@ class TransactionController extends Controller
         $account = Account::find(request('account_id'));
 
         $label_ids = [];
-        if ($account->balance >= request('amount')) {
+
+        if ($this->isValidAmount($account)) {
             $transaction = new Transaction;
             $transaction->title       = request('title');
             $transaction->account_id  = request('account_id');
@@ -52,12 +54,31 @@ class TransactionController extends Controller
                 $transaction->labels()->attach($label_ids);
             }
 
-            $account->balance -= request('amount');
+            if ($this->isOutgoing()) {
+                $account->balance -= request('amount');
+            } else {
+                $account->balance += request('amount');
+            }
+
             $account->save();
 
             return response()->json([], 200);
         }
 
         return response()->json([], 400);
+    }
+
+    private function isOutgoing()
+    {
+        return request('type') == TransactionType::EXPENSE || request('type') == TransactionType::LOAN;
+    }
+
+    private function isValidAmount($account)
+    {
+        if ($this->isOutgoing()) {
+            return $account->balance >= request('amount');
+        }
+
+        return true;
     }
 }
