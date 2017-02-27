@@ -18,7 +18,7 @@ class TransactionController extends Controller
         $rules = [
             'title' => 'required|max:50',
             'amount' => 'required|gt:0',
-            'category' => 'required|exists:categories,id,transaction_type_id,' . request('type'),
+            'category' => 'required_if:type,1,2|exists:categories,id,transaction_type_id,' . request('type'),
             'date' => 'date_format:Y-m-d|before:' . Carbon::tomorrow()->format('Y-m-d'),
             'hour' => 'before:'.Carbon::now()->format('H:i'),
         ];
