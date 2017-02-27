@@ -21,7 +21,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedInteger('account_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('type_id');
-            $table->unsignedInteger('category_id');
+            $table->unsignedInteger('category_id')->nullable();
             $table->double('amount');
             $table->string('description')->nullable();
             $table->date('date');
