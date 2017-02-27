@@ -345,7 +345,7 @@ class AddTransactionTest extends TestCase
         $this->json('post', 'transactions', [
             'account_id' => 1,
             'title' => 'loan to Juancito',
-            'amount' => 100.40,
+            'amount' => 99.40,
             'type' => 3,
             'description' => 'juancito buys many empanadas',
         ]);
