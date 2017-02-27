@@ -9,6 +9,7 @@ use App\TransactionType;
 use Carbon\Carbon;
 use App\Account;
 use App\Label;
+use App\Loan;
 use Auth;
 
 class TransactionController extends Controller
@@ -16,11 +17,12 @@ class TransactionController extends Controller
     public function add()
     {
         $rules = [
-            'title' => 'required|max:50',
-            'amount' => 'required|gt:0',
+            'title'    => 'required|max:50',
+            'amount'   => 'required|gt:0',
             'category' => 'required_if:type,1,2|exists:categories,id,transaction_type_id,' . request('type'),
-            'date' => 'date_format:Y-m-d|before:' . Carbon::tomorrow()->format('Y-m-d'),
-            'hour' => 'before:'.Carbon::now()->format('H:i'),
+            'date'     => 'date_format:Y-m-d|before:' . Carbon::tomorrow()->format('Y-m-d'),
+            'hour'     => 'before:'.Carbon::now()->format('H:i'),
+            'deadline' => 'required_if:type:3,4',
         ];
 
         $messages = [
@@ -62,10 +64,23 @@ class TransactionController extends Controller
 
             $account->save();
 
+            if ($this->isLoanable()) {
+                $loan = Loan::create([
+                    'account_id'     => $account->id,
+                    'transaction_id' => $transaction->id,
+                    'deadline'       => Carbon::createFromFormat('d/m/Y', request('deadline')),
+                ]);
+            }
+
             return response()->json([], 200);
         }
 
         return response()->json([], 400);
+    }
+
+    private function isLoanable()
+    {
+        return request('type') == TransactionType::LOAN || request('type') == TransactionType::DEBT;
     }
 
     private function isOutgoing()
