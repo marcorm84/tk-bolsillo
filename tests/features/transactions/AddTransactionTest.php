@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\TransactionType;
 use App\Category;
 use App\Account;
+use App\Loan;
 use App\Transaction;
 use Carbon\Carbon;
 
@@ -348,9 +349,19 @@ class AddTransactionTest extends TestCase
             'amount' => 99.40,
             'type' => 3,
             'description' => 'juancito buys many empanadas',
+            'deadline' => '16/06/2017',
         ]);
 
         $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('loans', ['account_id' => 1]);
+        $this->seeInDatabase('transactions', ['title' => 'loan to Juancito']);
+
+        $loan    = Loan::find(1);
+        $account = Account::find(1);
+
+        $this->assertTrue($loan->account == $account);
+        $this->assertTrue($loan->source->title == 'loan to Juancito');
     }
 
     /**
@@ -365,9 +376,19 @@ class AddTransactionTest extends TestCase
             'title' => 'debt to Francisco',
             'amount' => 777.30,
             'type' => 4,
-            'description' => 'debt for Francisco Party'
+            'description' => 'debt for Francisco Party',
+            'deadline' => '16/06/2017',
         ]);
 
         $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('loans', ['account_id' => 1]);
+        $this->seeInDatabase('transactions', ['title' => 'debt to Francisco']);
+
+        $loan    = Loan::find(1);
+        $account = Account::find(1);
+
+        $this->assertTrue($loan->account == $account);
+        $this->assertTrue($loan->source->title == 'debt to Francisco');
     }
 }
